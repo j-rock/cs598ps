@@ -2,18 +2,18 @@
 # CS598 Project Proposal
 
 ### Members
-*Sean Bartell (smbarte2)
-*Evan Bowling (ebowlin2)
-*Joseph Rock (jwrock2)
+* Sean Bartell (smbarte2)
+* Evan Bowling (ebowlin2)
+* Joseph Rock (jwrock2)
 
 ### Summary
 
 Supervised learning task that detects pre-recorded audio samples (training) within other audio sections (testing). We will be constructing our own dataset of human-made sounds (not words, more like simple noices you might make to a pet):
-*click noise
-*kissy noise
-*popping noise
-*whistle noise
-*etc
+* click noise
+* kissy noise
+* popping noise
+* whistle noise
+* etc
 
 #### Objective 1
 
