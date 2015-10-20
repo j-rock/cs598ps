@@ -1,0 +1,39 @@
+------------------
+- HOW TO USE THIS SECTION
+------------------
+If you identify interesting papers that you can't access, write the title and url in section 0.Not Yet Downloaded Papers below.
+
+If you can access the paper (either through UIUC or otherwise) and download the pdf, write the title/author/year/url in section 1.Downloaded Papers below. Please update the name of the pdf to match a portion of the title.
+
+If you can review the papers, move the text for a downloaded paper from section1 to section2.Reviewed Papers and add your summary. If you like, you can add your name before it (e.g.  (evan) the paper used PCA, ok results).
+
+
+------------------
+- 0.NOT YET DOWNLOADED PAPERS
+------------------
+
+- TITLE - URL
+
+
+------------------
+- 1.DOWNLOADED PAPERS
+------------------
+
+- TITLE - AUTHOR - YEAR - URL
+
+"Zero-resource audio-only spoken term detection based on a combination of template matching techniques" - Muscariello et al. - 2011 - https://hal.inria.fr/inria-00597907/document
+
+"Automatic Chord Recognition from Audio Using Enhanced Pitch Class Profile" - Lee, Kyogu - 2006 - https://ccrma.stanford.edu/~kglee/pubs/klee-icmc06.pdf 
+"DIRECTIONAL NMF FOR JOINT SOURCE LOCALIZATION AND SEPARATION" - Traa, Smaragdis et al. - 2015 - http://paris.cs.illinois.edu/pubs/traa-waspaa15.pdf
+
+"Online PLCA for Real-time Semi-supervised
+Source Separation" - Smaragdis et al. - 2012 - http://paris.cs.illinois.edu/pubs/duan-lvaica2012.pdf
+
+------------------
+- 1.REVIEWED PAPERS
+------------------
+
+- TITLE - AUTHOR - YEAR - URL
+- SUMMARY
+
+
