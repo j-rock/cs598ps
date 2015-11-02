@@ -29,6 +29,8 @@ If you can review the papers, move the text for a downloaded paper from section1
 "Online PLCA for Real-time Semi-supervised
 Source Separation" - Smaragdis et al. - 2012 - http://paris.cs.illinois.edu/pubs/duan-lvaica2012.pdf
 
+"Large Scale Multiple Kernel Learning" - Sonnenburg - 2006 - http://machinelearning.wustl.edu/mlpapers/paper_files/SonnenburgRSS06.pdf
+
 ------------------
 - 1.REVIEWED PAPERS
 ------------------
@@ -36,4 +38,6 @@ Source Separation" - Smaragdis et al. - 2012 - http://paris.cs.illinois.edu/pubs
 - TITLE - AUTHOR - YEAR - URL
 - SUMMARY
 
+"Relationship between ROC and precision recall curves" - Davis et al. - 2006 - http://www.autonlab.org/icml_documents/camera-ready/030_The_Relationship_Bet.pdf
+ROC curves may not be necessary to be plotted at all, but could be considered. Precision recall curves are considered better.
 
