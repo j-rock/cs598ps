@@ -1,4 +1,10 @@
+
+# python lib imports
+# external imports
 from scipy import signal
+
+# project specific imports
+from get_dropbox_path import get_dropbox_path
 
 def template_match(template, audio):
     # convolution
@@ -18,7 +24,7 @@ if __name__ == '__main__':
     from matplotlib import pyplot as plt
     import scipy.io.wavfile as wavfile
 
-    DROPBOX_PATH = '../../_/db/'
+    DROPBOX_PATH = get_dropbox_path()
 
     template_rate, template = wavfile.read(DROPBOX_PATH + 'raw_samples/distinct_sounds/eee_sound.wav')
     #audio_rate, audio = wavfile.read(DROPBOX_PATH + 'test/distinct_sounds/song-audio-eee-present.wav')
