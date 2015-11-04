@@ -1,9 +1,5 @@
 
-# python lib imports
-# external imports
 from scipy import signal
-
-# project specific imports
 from get_dropbox_path import get_dropbox_path
 
 def template_match(template, audio):
