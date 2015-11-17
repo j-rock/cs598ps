@@ -6,16 +6,20 @@ from dataset import *
 from get_dropbox_path import *
 
 if __name__ == '__main__':
-    print('Running example1\n')
+    print('Running example1 - reports list of audio files in dropbox folder')
 
     # return a list of the audio templates
     templates = find_templates(get_dropbox_path())
-    print('Found '+str(len(templates))+' templates')
+    print('\nFound '+str(len(templates))+' templates')
     for template in templates:
         print('\t'+str(template))
 
     # return a list of the audio test recordings
     recordings = find_testrecordings(get_dropbox_path())
-    print('Found '+str(len(recordings))+' recordings')
+    print('\nFound '+str(len(recordings))+' recordings')
     for recording in recordings:
         print('\t'+str(recording))
+
+    # return a list of the audio test samples
+    samples = find_testsamples(get_dropbox_path())
+    print('\nFound '+str(len(samples))+' samples')

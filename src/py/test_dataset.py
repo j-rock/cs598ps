@@ -28,9 +28,9 @@ def get_mock_templates(path):
 
 def get_mock_testrecordings(path):
     testrecordings=[]
-    testrecordings.append('testrecording_Q1_A1_16bit_48000.wav')
-    testrecordings.append('/test/a/testrecording_Q2_A1_16bit_48000.wav')
-    testrecordings.append('/test/a/b/testrecording_Q1_E1_16bit_48000.wav')
+    testrecordings.append('rec_Q1_0001.wav')
+    testrecordings.append('/test/a/rec_Q2_0003.wav')
+    testrecordings.append('/test/a/b/rec_Q1_0002.wav')
     return testrecordings
 
 def get_mock_testsamples(path):
@@ -41,10 +41,10 @@ def get_mock_testsamples(path):
     return testrecordings
 
 valid_template_name='template_A1_16bit_48000.wav'
-valid_testrecording_name='testrecording_Q1_A1_16bit_48000.wav'
+valid_testrecording_name='rec_Q1_0001.wav'
 valid_testsample_name='testsample_Q1_1_A1_16bit_48000.wav'
 valid_abs_template_name='/lib/template_A1_16bit_48000.wav'
-valid_abs_testrecording_name='/lib/a/testrecording_Q1_A1_16bit_48000.wav'
+valid_abs_testrecording_name='/lib/a/rec_Q1_0001.wav'
 valid_abs_testsample_name='/lib/a/b/testsample_Q1_1_A1_16bit_48000.wav'
 
 class TestNonClassMethods(unittest.TestCase):
@@ -78,7 +78,7 @@ class TestNonClassMethods(unittest.TestCase):
         self.assertEqual(_is_testrecording(valid_abs_testrecording_name), True)
 
         # simple negative checks
-        self.assertEqual(_is_testrecording('testrec_Q1_A1_16bit_48000.wav'), False)
+        self.assertEqual(_is_testrecording('re__Q1_0001.wav'), False)
 
         # ensure that no valid name of one type is valid for the other types
         # (these names need to correlate with a single type)
@@ -153,10 +153,38 @@ class TestTestRecording(unittest.TestCase):
     Tests for the TestRecording class
     """
 
+    def test_init_sets_requiredprops(self):
+        """
+        Test that the init method sets the appropriate properties
+        within the class object.
+        """
+        m = TestRecording(valid_testrecording_name);
+        self.assertEqual(m.path,valid_testrecording_name)
+
+
+        m2 = TestRecording('rec_Q1_0002.wav')
+        self.assertEqual(m2.path,'rec_Q1_0002.wav')
+        self.assertEqual(m2.metapath,'rec_Q1_0002.json')
+        self.assertEqual(m2.id,'0002')
+        self.assertEqual(m2.env,'Q1')
+
+        # test with long environment name
+        m3 = TestRecording('rec_Q100_0002.wav')
+        self.assertEqual(m3.env,'Q100')
+
 class TestTestSample(unittest.TestCase):
     """
     Tests for the TestSample class
     """
+
+    def test_init_sets_requiredprops(self):
+        """
+        Test that the init method sets the appropriate properties
+        within the class object.
+        """
+        m = TestSample(valid_testsample_name);
+        self.assertEqual(m.path,valid_testsample_name)
+        self.assertEqual(m.key,'A1')
 
 default_key = 'A1'
 
