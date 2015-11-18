@@ -35,17 +35,17 @@ def get_mock_testrecordings(path):
 
 def get_mock_testsamples(path):
     testrecordings=[]
-    testrecordings.append('testsample_Q1_1_A1_16bit_48000.wav')
-    testrecordings.append('/test/a/testsample_Q1_2_A1_16bit_48000.wav')
-    testrecordings.append('/test/a/b/testsample_Q1_3_A1_16bit_48000.wav')
+    testrecordings.append('sample_Q1_0001_1_A1.wav')
+    testrecordings.append('/test/a/sample_Q1_0001_2_A1.wav')
+    testrecordings.append('/test/a/b/sample_Q1_0001_3_A1.wav')
     return testrecordings
 
 valid_template_name='template_A1_16bit_48000.wav'
 valid_testrecording_name='rec_Q1_0001.wav'
-valid_testsample_name='testsample_Q1_1_A1_16bit_48000.wav'
+valid_testsample_name='sample_Q1_0001_1_A1.wav'
 valid_abs_template_name='/lib/template_A1_16bit_48000.wav'
 valid_abs_testrecording_name='/lib/a/rec_Q1_0001.wav'
-valid_abs_testsample_name='/lib/a/b/testsample_Q1_1_A1_16bit_48000.wav'
+valid_abs_testsample_name='/lib/a/b/sample_Q1_0001_1_A1.wav'
 
 class TestNonClassMethods(unittest.TestCase):
     """
@@ -95,7 +95,7 @@ class TestNonClassMethods(unittest.TestCase):
         self.assertEqual(_is_testsample(valid_abs_testsample_name), True)
 
         # simple negative checks
-        self.assertEqual(_is_testsample('testsample_Q1_1_A1_16bit_48000.wav'), True)
+        self.assertEqual(_is_testsample('samle___Q1_0001_1_A1.wav'), False)
 
         # ensure that no valid name of one type is valid for the other types
         # (these names need to correlate with a single type)
@@ -184,7 +184,21 @@ class TestTestSample(unittest.TestCase):
         """
         m = TestSample(valid_testsample_name);
         self.assertEqual(m.path,valid_testsample_name)
-        self.assertEqual(m.key,'A1')
+        self.assertEqual(m.template,'A1')
+
+        s2 = TestSample('sample_Q1_0002_1_A1.wav')
+        self.assertEqual(s2.path,'sample_Q1_0002_1_A1.wav')
+        self.assertEqual(s2.recording_id,'0002')
+        self.assertEqual(s2.env,'Q1')
+        self.assertEqual(s2.sample_num,'1')
+        self.assertEqual(s2.template,'A1')
+
+        # test with long environment name
+        m3 = TestSample('sample_Q100_0034_56_E32.wav')
+        self.assertEqual(m3.env,'Q100')
+        self.assertEqual(m3.recording_id,'0034')
+        self.assertEqual(m3.sample_num,'56')
+        self.assertEqual(m3.template,'E32')
 
 default_key = 'A1'
 

@@ -122,7 +122,7 @@ def _is_testsample(filepath):
     """
     parts = filepath.split(os.sep)
     file_name = parts[len(parts)-1]
-    return file_name.startswith('testsample_') and file_name.endswith('.wav')
+    return file_name.startswith('sample_') and file_name.endswith('.wav')
 
 class Template():
     """
@@ -260,8 +260,11 @@ class TestSample():
         parts = path.split(os.sep)
         self.name=parts[len(parts)-1]
         name_parts = self.name.split('_')
-        assert(len(name_parts),6)
-        self.key=name_parts[3]
+        assert(len(name_parts),5)
+        self.env=name_parts[1]
+        self.recording_id=name_parts[2]
+        self.sample_num=name_parts[3]
+        self.template=name_parts[4].replace('.wav','')
 
     def __str__(self):
         return self.name
