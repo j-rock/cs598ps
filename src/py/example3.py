@@ -9,7 +9,8 @@ if __name__ == '__main__':
     print('Running example3 - process test recordings to generate new samples')
 
     # generate samples for all of the current recordings
-    recordings = find_testrecordings(get_dropbox_path())
+    path=get_dropbox_path()
+    recordings = find_testrecordings(path)
     print('\nFound '+str(len(recordings))+' recordings')
     prompt='This will generate new sample wav files for each test recording.\n Do you want to continue? (y/n)'
     if len(recordings) > 0 and raw_input(prompt) == 'y':

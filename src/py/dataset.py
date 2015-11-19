@@ -108,7 +108,7 @@ def find_testsamples(path,get_files=_get_abs_files):
     samples = []
     for file in get_files(path):
         if _is_testsample(file):
-            samples.append(file)
+            samples.append(TestSample(file))
     return samples
 
 def _is_testsample(filepath):
@@ -232,9 +232,7 @@ class TestRecording():
             raise ValueError('Cannot generate samples from invalid testrecording')
         else:
             (rate,audio) = wav.read(self.path)
-            # divide the recordings into 1-sec samples
-            num_segments = len(audio) / rate
-            segments = split_padded(audio,num_segments)
+            segments = split_padded(audio,rate)
             for s in range(0,len(segments)):
                 root = self.path.replace(self.name,'')
                 sample_path = root+relative_path+self._create_sample_name(s)
@@ -265,9 +263,29 @@ class TestSample():
         self.recording_id=name_parts[2]
         self.sample_num=name_parts[3]
         self.template=name_parts[4].replace('.wav','')
+        self.samples=0
+        self.samplerate=0
+
+    def sec(self):
+        """
+        Return the length of the sample in seconds.
+        """
+        if self.samples != 0 and self.samplerate != 0:
+            return float(self.samples)/float(self.samplerate)
+        return 0.0
 
     def __str__(self):
-        return self.name
+        if self.sec() != 0.0:
+            return "<sample name='"+self.name+"' length='"+str(self.sec())+"sec'>"
+        return "<sample name='"+self.name+"'>"
+
+    def check(self):
+        """
+        Load the wav file to measure sample rate, length.
+        """
+        (rate,audio) = wav.read(self.path)
+        self.samples=len(audio)
+        self.samplerate=rate
 
 class TemplateMarker():
     """
