@@ -1,5 +1,8 @@
-
+import math
 import numpy as np
+import scipy.io.wavfile as wav
+import matplotlib.pyplot as plt
+
 
 def _calc_padding(array,n):
     """
@@ -39,3 +42,20 @@ def split_padded(array,samplesize):
         return np.split(temp,(len(temp)/samplesize))
     else:
         raise ValueError('Higher dimensional arrays not yet supported.')
+
+def sine(frequency, length, rate,dtype='int16',amplitude=0.5):
+    length = int(length * rate)
+    factor = float(frequency) * (math.pi * 2) / rate
+    return np.sin(np.arange(length,dtype=dtype) * factor)
+
+def loadnplot(wavfile):
+    """
+    Utility method for loading and displaying wav file content transformed
+    from the time domain to the frequency domain.
+    """
+    (rate,audio) = wav.read(wavfile)
+    freq_domain = np.fft.fft(audio)
+    #plt.plot(audio)
+    #plt.show()
+    plt.plot(freq_domain.real)
+    plt.show()

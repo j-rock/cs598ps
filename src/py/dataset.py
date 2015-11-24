@@ -108,7 +108,10 @@ def find_testsamples(path,get_files=_get_abs_files):
     samples = []
     for file in get_files(path):
         if _is_testsample(file):
-            samples.append(TestSample(file))
+            try:
+                samples.append(TestSample(file))
+            except AssertionError:
+                pass
     return samples
 
 def _is_testsample(filepath):
@@ -122,6 +125,9 @@ def _is_testsample(filepath):
     """
     parts = filepath.split(os.sep)
     file_name = parts[len(parts)-1]
+    name_parts = file_name.split('_')
+    if len(name_parts) != 5:
+        return False
     return file_name.startswith('sample_') and file_name.endswith('.wav')
 
 class Template():
@@ -243,12 +249,12 @@ class TestRecording():
 
 class TestSample():
     """
-    Sound sample derived from test recordings. These samples were pre-processed
+    Sound sample derived from test recordings. These samples were generated
     from test recordings to simplify training/testing. The length of test samples
     should be the same. A testsample name is supposed to follow the pattern:
 
 
-    sample_<ENVIRONMENT>_<RECORDINGID>_<SAMPLENUMBER>_<TEMPLATE>.<FORMAT>
+    sample_<ENVIRONMENT>_<RECORDINGID>_<SAMPLENUMBER>_<CLASS>.<FORMAT>
 
     e.g.   sample_Q1_0001_1_A1.wav
     """
@@ -258,34 +264,45 @@ class TestSample():
         parts = path.split(os.sep)
         self.name=parts[len(parts)-1]
         name_parts = self.name.split('_')
-        assert(len(name_parts),5)
+        assert len(name_parts) == 5
         self.env=name_parts[1]
         self.recording_id=name_parts[2]
         self.sample_num=name_parts[3]
-        self.template=name_parts[4].replace('.wav','')
+        self.y=name_parts[4].replace('.wav','')
         self.samples=0
         self.samplerate=0
 
+    def classname(self):
+        """
+        Convenience method to clarify the properties of the object.
+        """
+        return self.y
+
     def sec(self):
         """
-        Return the length of the sample in seconds.
+        Convenience method to return the length of the sample
+        in seconds.
         """
         if self.samples != 0 and self.samplerate != 0:
             return float(self.samples)/float(self.samplerate)
         return 0.0
 
     def __str__(self):
+        string = "<sample name='"+self.name+"' y='"+self.y+"' "
         if self.sec() != 0.0:
-            return "<sample name='"+self.name+"' length='"+str(self.sec())+"sec'>"
-        return "<sample name='"+self.name+"'>"
+            string=string+"length='"+str(self.sec())+"sec' "
+        return string+">"
+
 
     def check(self):
         """
-        Load the wav file to measure sample rate, length.
+        Load the wav file sample rate, length. Currently this is done
+        by reading the file directly, which can likely be improved in the future.
         """
-        (rate,audio) = wav.read(self.path)
-        self.samples=len(audio)
-        self.samplerate=rate
+        if self.samples == 0 or self.samplerate == 0:
+            (rate,audio) = wav.read(self.path)
+            self.samples=len(audio)
+            self.samplerate=rate
 
 class TemplateMarker():
     """
