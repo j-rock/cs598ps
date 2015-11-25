@@ -1,5 +1,4 @@
 import unittest
-from dataset import TemplateMarker
 from offlineclassifier import TemplateClassifier
 from sklearn import svm
 import numpy as np

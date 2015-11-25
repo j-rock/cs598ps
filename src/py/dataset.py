@@ -303,34 +303,3 @@ class TestSample():
             (rate,audio) = wav.read(self.path)
             self.samples=len(audio)
             self.samplerate=rate
-
-class TemplateMarker():
-    """
-    Mark the time at which a specific template occurs within
-    an audio file.
-    """
-
-    def __init__(self,key,min,sec):
-        """
-        Constructor method. Throws ValueError if min & sec are not in range
-        [0,59].
-        Parameters
-        ----------
-        key : string
-           The template key
-        min : int
-           The minutes at which the event occurred.
-        sec : int
-           The seconds at which the event occurred.
-        """
-        self.key = key
-        if min < 0 or min > 59 or sec < 0 or sec > 59:
-            raise ValueError
-        self.min = min
-        self.sec = sec
-
-    def __str__(self):
-        """
-        Return a string version of the instance.
-        """
-        return "{0:02d}:{1:02d}".format(self.min,self.sec)

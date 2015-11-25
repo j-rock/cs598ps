@@ -97,6 +97,11 @@ class TestNonClassMethods(unittest.TestCase):
         # simple negative checks
         self.assertEqual(_is_testsample('samle___Q1_0001_1_A1.wav'), False)
 
+        # check that a sample name with missing parts is invalid
+        self.assertEqual(_is_testsample('sample_Q1_1_A1.wav'), False)
+        self.assertEqual(_is_testsample('sample_Q1_.wav'), False)
+        self.assertEqual(_is_testsample('sample_A1.wav'), False)
+
         # ensure that no valid name of one type is valid for the other types
         # (these names need to correlate with a single type)
         self.assertEqual(_is_testsample(valid_template_name), False)
@@ -184,21 +189,21 @@ class TestTestSample(unittest.TestCase):
         """
         m = TestSample(valid_testsample_name);
         self.assertEqual(m.path,valid_testsample_name)
-        self.assertEqual(m.template,'A1')
+        self.assertEqual(m.y,'A1')
 
         s2 = TestSample('sample_Q1_0002_1_A1.wav')
         self.assertEqual(s2.path,'sample_Q1_0002_1_A1.wav')
         self.assertEqual(s2.recording_id,'0002')
         self.assertEqual(s2.env,'Q1')
         self.assertEqual(s2.sample_num,'1')
-        self.assertEqual(s2.template,'A1')
+        self.assertEqual(s2.y,'A1')
 
         # test with long environment name
         m3 = TestSample('sample_Q100_0034_56_E32.wav')
         self.assertEqual(m3.env,'Q100')
         self.assertEqual(m3.recording_id,'0034')
         self.assertEqual(m3.sample_num,'56')
-        self.assertEqual(m3.template,'E32')
+        self.assertEqual(m3.y,'E32')
 
 default_key = 'A1'
 
@@ -212,33 +217,3 @@ def init_throws_exception(min,sec):
     except ValueError:
         return True
     return False
-
-class TestTemplateMarker(unittest.TestCase):
-    """
-    Tests for the TemplateMarker class
-    """
-
-    def test_string(self):
-        m = TemplateMarker(default_key,3,4);
-        self.assertEqual(str(m), '03:04')
-        m = TemplateMarker(default_key,13,4);
-        self.assertEqual(str(m), '13:04')
-
-    def test_init_invalidvalues(self):
-        """
-        TemplateMarker should only be created with min and sec in range
-        [0,59]
-        """
-        self.assertEqual(init_throws_exception(0,59), False)
-        self.assertEqual(init_throws_exception(-13,4), True)
-        self.assertEqual(init_throws_exception(13,-4), True)
-        self.assertEqual(init_throws_exception(-13,-4), True)
-        self.assertEqual(init_throws_exception(0,60), True)
-        self.assertEqual(init_throws_exception(60,0), True)
-        self.assertEqual(init_throws_exception(60,60), True)
-
-    def test_init_validvalue(self):
-        m = TemplateMarker('A1',3,4);
-        self.assertEqual(m.key, 'A1')
-        self.assertEqual(m.min, 3)
-        self.assertEqual(m.sec, 4)

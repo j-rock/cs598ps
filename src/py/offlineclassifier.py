@@ -2,7 +2,6 @@
 from scipy import signal
 import scipy.io.wavfile as wavfile
 from dataset import *
-from dataset import TemplateMarker
 import timeit
 from sklearn import svm
 
