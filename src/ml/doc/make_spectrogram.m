@@ -78,9 +78,12 @@ while curr < rows
     % debug line to check overlap values
     %disp(sprintf('wi:%d  w_start:%d w_end: %d',wi,w_start,w_end));
 
-    % for real-valued input, only half the results are valid
-    % the values simply repeat after the middle
+    % % for real-valued input, only half the results are valid
+    % % the values simply repeat after the middle
     result(1:(window_size/2),steps)=res(1:(window_size/2));
+    
+    % %DEBUG: use the whole window_size
+    %result(1:(window_size),steps)=res(1:(window_size));
 
     curr=curr+step;
     steps=steps+1;
