@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from numpyutils import split_padded, _calc_padding
+from utils import split_padded, _calc_padding
 
 
 def create_1d_array(l):
@@ -11,7 +11,7 @@ def create_2d_array(l):
 
 class TestNonClassMethods(unittest.TestCase):
     """
-    Tests for the methods in the "numpyutils" module not within a class.
+    Tests for the methods in the "utils" module not within a class.
     """
 
     def test_calc_padding_simple(self):

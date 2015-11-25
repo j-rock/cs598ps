@@ -5,7 +5,8 @@ import os.path
 import json
 import scipy.io.wavfile as wav
 import sounddevice as sd
-from numpyutils import *
+from utils import *
+import random
 
 def record_sample(duration=3,samplerate=11025,channels=1,blocking=False):
     """
@@ -303,3 +304,51 @@ class TestSample():
             (rate,audio) = wav.read(self.path)
             self.samples=len(audio)
             self.samplerate=rate
+
+class SampleSet():
+    """
+    Generate sample sets of TestSample objects for
+    training and testing classifiers.
+    """
+
+    def __init__(self,samples):
+        self.samples = samples
+
+    def sample(self,in_order=False,ratio=0.5):
+        """
+        Create training and testing sample sets.
+
+        Parameters:
+        -----------
+
+        in_order - bool
+           If True, no random sorting will be performed. The
+           training and testing datasets will be non-changing
+           if the ratio remains the same. By default, this is
+           False.
+        ratio - float
+           The training/testing data ratio. This number must be
+           in the range (0.0,1.0]
+        """
+        assert ratio > 0.
+        assert ratio <= 1.
+        train=[]
+        test=[]
+
+        n = len(self.samples)
+        sequence = range(n)
+        if not in_order:
+            # generate random sequence
+            sequence = random.sample(sequence,n)
+
+        for s in sequence:
+            if (float(len(train)/float(n))) < float(ratio):
+                # add to training set
+                train.append(self.samples[s])
+            else:
+                # add to testing set
+                test.append(self.samples[s])
+        return (train,test)
+
+    def __len__(self):
+        return len(self.samples)

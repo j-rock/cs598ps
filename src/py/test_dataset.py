@@ -205,15 +205,145 @@ class TestTestSample(unittest.TestCase):
         self.assertEqual(m3.sample_num,'56')
         self.assertEqual(m3.y,'E32')
 
-default_key = 'A1'
+def prep_sample_set():
+    samples = []
+    samples.append(TestSample('sample_Q1_0002_1_A1.wav'))
+    samples.append(TestSample('sample_Q1_0002_2_A1.wav'))
+    samples.append(TestSample('sample_Q1_0002_3_A1.wav'))
+    samples.append(TestSample('sample_Q1_0002_4_A1.wav'))
+    samples.append(TestSample('sample_Q1_0002_5_A1.wav'))
+    samples.append(TestSample('sample_Q1_0002_6_A1.wav'))
+    samples.append(TestSample('sample_Q1_0002_7_A1.wav'))
+    samples.append(TestSample('sample_Q1_0002_8_A1.wav'))
+    samples.append(TestSample('sample_Q1_0002_9_A1.wav'))
+    samples.append(TestSample('sample_Q1_0002_10_A1.wav'))
 
-def init_throws_exception(min,sec):
+    return SampleSet(samples)
+
+class TestSampleSet(unittest.TestCase):
     """
-    utility method for testing invalid argument values
-    for TemplateMarker.
+    Tests for the SampleSet class.
     """
-    try:
-        m = TemplateMarker(default_key,min,sec);
-    except ValueError:
-        return True
-    return False
+
+    def test_sample_simple(self):
+        """
+        Test that the sample method returns the correct number
+        of items.
+        """
+        sample_set = prep_sample_set()
+        (train,test) = sample_set.sample()
+        self.assertEqual(len(train)+len(test),len(sample_set))
+
+    def test_sample_in_order(self):
+        """
+        Test that the sample method returns the same lists
+        of training and testing data if the in_order argument
+        is True. The method should be indempotent in this case.
+        """
+        sample_set = prep_sample_set()
+
+        # take 1st sample from SampleSet and gather stats
+        (train,test) = sample_set.sample(in_order=True)
+        self.assertEqual(len(train)+len(test),len(sample_set))
+        train1 = train[0]
+        train2 = train[1]
+        train3 = train[2]
+        train_len = len(train)
+        test1 = test[0]
+        test2 = test[1]
+        test3 = test[2]
+        test_len = len(test)
+
+        # take N samples and confirm that the results are the same
+        for i in range(0,10):
+            (train,test) = sample_set.sample(in_order=True)
+            self.assertEqual(train_len,len(train))
+            self.assertEqual(train1,train[0])
+            self.assertEqual(train2,train[1])
+            self.assertEqual(train3,train[2])
+            self.assertEqual(test_len,len(test))
+            self.assertEqual(train1,train[0])
+            self.assertEqual(train2,train[1])
+            self.assertEqual(train3,train[2])
+
+
+    def test_sample_ratio_0_5(self):
+        """
+        Test that the sample method returns the proper ratio of
+        TestSamples based on the ratio argument.
+        """
+        sample_set = prep_sample_set()
+        self.assertEqual(len(sample_set),10)
+
+        # test 0.5 ratio
+        (train,test) = sample_set.sample(ratio=0.5)
+        self.assertEqual(len(train),5)
+        self.assertEqual(len(test),5)
+
+    def test_sample_ratio_0_1(self):
+        """
+        Test that the sample method returns the proper ratio of
+        TestSamples based on the ratio argument.
+        """
+        sample_set = prep_sample_set()
+        self.assertEqual(len(sample_set),10)
+
+        # test 0.1 ratio
+        (train,test) = sample_set.sample(ratio=0.1)
+        self.assertEqual(len(train),1)
+        self.assertEqual(len(test),9)
+
+    def test_sample_ratio_0_7(self):
+        """
+        Test that the sample method returns the proper ratio of
+        TestSamples based on the ratio argument.
+        """
+        sample_set = prep_sample_set()
+        self.assertEqual(len(sample_set),10)
+
+        # test 0.7 ratio
+        (train,test) = sample_set.sample(ratio=0.7)
+        self.assertEqual(len(train),7)
+        self.assertEqual(len(test),3)
+
+
+    def test_sample_ratio_0_8(self):
+        """
+        Test that the sample method returns the proper ratio of
+        TestSamples based on the ratio argument.
+        """
+        sample_set = prep_sample_set()
+        self.assertEqual(len(sample_set),10)
+
+        # test 0.8 ratio
+        (train,test) = sample_set.sample(ratio=0.8)
+        self.assertEqual(len(train),8)
+        self.assertEqual(len(test),2)
+
+
+    def test_sample_ratio_0_9(self):
+        """
+        Test that the sample method returns the proper ratio of
+        TestSamples based on the ratio argument.
+        """
+        sample_set = prep_sample_set()
+        self.assertEqual(len(sample_set),10)
+
+        # test 0.9 ratio
+        (train,test) = sample_set.sample(ratio=0.9)
+        self.assertEqual(len(train),9)
+        self.assertEqual(len(test),1)
+
+
+    def test_sample_ratio_1_0(self):
+        """
+        Test that the sample method returns the proper ratio of
+        TestSamples based on the ratio argument.
+        """
+        sample_set = prep_sample_set()
+        self.assertEqual(len(sample_set),10)
+
+        # test 0.7 ratio
+        (train,test) = sample_set.sample(ratio=1.0)
+        self.assertEqual(len(train),10)
+        self.assertEqual(len(test),0)
