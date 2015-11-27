@@ -3,6 +3,7 @@ from get_dropbox_path import *
 from dataset import *
 from matplotlib import pyplot as plt
 from feature import *
+import time
 
 def run_offline_template(path=get_dropbox_path()):
     """
@@ -49,7 +50,7 @@ def class_factory(sample):
     else:
         return 0
 
-def run_offline_svm(quiet_env=True,path=get_dropbox_path()):
+def run_offline_svm(path=get_dropbox_path()):
     """
     Run the offline version of the SVM classifier on all
     samples found in the path.
@@ -61,23 +62,95 @@ def run_offline_svm(quiet_env=True,path=get_dropbox_path()):
     """
     print('Running SVM classifier')
 
-    if quiet_env == True:
-        # return a list of the audio test samples
-        samples = find_testsamples(path)
+    # return a list of the audio test samples
+    samples = find_testsamples(path)
 
-        # extract quiet samples
-        quiet_samples = []
-        for sample in samples:
-            if sample.env == 'Q1' or sample.env == 'Q2':
-                quiet_samples.append(sample)
+    # extract quiet samples
+    quiet_samples = []
+    for sample in samples:
+        if sample.env == 'Q1' or sample.env == 'Q2':
+            quiet_samples.append(sample)
 
-        classifier = SVMClassifier(quiet_samples)
-        classifier.stats()
-        classifier.run(feature_factory,class_factory)
+    sample_set = SampleSet(quiet_samples)
+    sample_set.stats()
+    (train,test) = sample_set.sample(in_order=False)
+
+    # generate features and classes from TestSamples
+    train_features = []
+    train_classes = []
+    for sample in train:
+        train_features.append(feature_factory(sample))
+        train_classes.append(class_factory(sample))
+
+    # train the classifier
+    classifier = SVMClassifier()
+    classifier.train(train_features,train_classes)
+
+    # generate features and classes from TestSamples
+    test_features = []
+    test_classes = []
+    for sample in test:
+        test_features.append(feature_factory(sample))
+        test_classes.append(class_factory(sample))
+
+    # test the classifier
+    classifier.test(test_features,test_classes)
+
+def train_offline_svm_test_live(path=get_dropbox_path()):
+    """
+    Train the offline version of the SVM classifier on all
+    samples found in the path. Then run the classifier on
+    1 second inputs live.
+
+    Parameters
+    ----------
+    path - string
+      The directory to search for TestSamples
+    """
+    print('Training SVM classifier')
+
+    # return a list of the audio test samples
+    samples = find_testsamples(path)
+
+    # extract quiet samples
+    quiet_samples = []
+    for sample in samples:
+        if sample.env == 'Q1' or sample.env == 'Q2':
+            quiet_samples.append(sample)
+
+    sample_set = SampleSet(quiet_samples)
+    sample_set.stats()
+    (train,test) = sample_set.sample(in_order=False)
+
+    # generate features and classes from TestSamples
+    train_features = []
+    train_classes = []
+    for sample in train:
+        train_features.append(feature_factory(sample))
+        train_classes.append(class_factory(sample))
+
+    # train the classifier
+    classifier = SVMClassifier()
+    classifier.train(train_features,train_classes)
+
+    prompt ='Would you like to record a 3-sec sample to test?'
+    if raw_input(prompt) == 'y':
+        print('Recording now...')
+        live_recording = record_sample(blocking=True)
+
+        # process the recording into test samples
+        test_samples = process_live_recording(live_recording,"UChiApt",str(time.time()))
+
+        print('Testing...')
+        for sample in test_samples:
+            feature = feature_factory(sample)
+            print("Prediction: "+str(classifier.predict(feature)))
     else:
-        classifier = SVMClassifier(find_testsamples(path))
-        classifier.stats()
-        classifier.run(feature_factory,class_factory)
+        print('Exiting...')
 
 if __name__ == '__main__':
-    run_offline_svm(quiet_env=False)
+
+    #run_offline_svm()
+
+    # Uncomment this line to run the classifier against new live recording
+    train_offline_svm_test_live()

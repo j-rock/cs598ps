@@ -4,35 +4,9 @@ import os
 import os.path
 import json
 import scipy.io.wavfile as wav
-import sounddevice as sd
 from utils import *
+from utils import _split_padded
 import random
-
-def record_sample(duration=3,samplerate=11025,channels=1,blocking=False):
-    """
-    An optionally blocking method used to start the recording of a sample.
-
-    Parameters:
-    -----------
-    duration : int
-        The length in seconds to record
-    samplerate : int
-        The number of samplesa per second to record at
-    channels : int
-        The number of channels to be used during recording
-    blocking : bool
-        True if method should block until it completes. False otherwise.
-    """
-    sample=sd.rec(duration * samplerate, samplerate=samplerate, channels=channels)
-    if blocking == True:
-        sd.wait()
-    return sample
-
-def play_sample(sample,samplerate=11025,blocking=True):
-    sd.play(sample, samplerate=samplerate,blocking=blocking)
-
-def save_sample(filename,sample,samplerate=11025):
-    wav.write(filename,samplerate,sample)
 
 def _get_abs_files(path):
     """
@@ -151,9 +125,24 @@ class Template():
         parts = path.split(os.sep)
         self.name=parts[len(parts)-1]
         name_parts = self.name.split('_')
-        assert(len(name_parts),4)
+        assert len(name_parts) == 4
         self.key=name_parts[1]
 
+
+def process_live_recording(audio,env,id,directory="./temp"):
+    """
+    Store and create a TestRecording for a single
+    live session and generate TestSamples for
+    classification.
+    """
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    recording_path = directory+os.sep+"rec_"+env+"_"+id+".wav"
+    if os.path.exists(recording_path):
+        raise ValueError("Recording path already exists: "+recording_path)
+    save_sample(recording_path,audio)
+    recording = TestRecording(recording_path)
+    return recording.generate_classless_samples()
 
 class TestRecording():
     """
@@ -176,7 +165,7 @@ class TestRecording():
         parts = path.split(os.sep)
         self.name=parts[len(parts)-1]
         name_parts = self.name.split('_')
-        assert(len(name_parts),3)
+        assert len(name_parts) ==3
         self.env = name_parts[1]
         self.id = name_parts[2].replace(".wav","")
         self.times = []
@@ -199,7 +188,7 @@ class TestRecording():
             obj = json.loads(f.read())
 
             # validate the metadata
-            assert(self.name,obj["filename"])
+            assert self.name == obj["filename"]
             self.times = obj["times"]
             self.templates = obj["templates"]
         self.loaded = True
@@ -219,8 +208,8 @@ class TestRecording():
             md.write(json.dumps(obj, sort_keys=True,indent=4,separators=(',',': ')))
             md.close()
 
-    def _create_sample_name(self,num):
-        sample_key='NONE'
+    def _create_sample_name(self,num,default_key='NONE'):
+        sample_key=default_key
         # only set the template key of the sample if the template
         # occurred at this time.
         if num in self.times:
@@ -239,11 +228,31 @@ class TestRecording():
             raise ValueError('Cannot generate samples from invalid testrecording')
         else:
             (rate,audio) = wav.read(self.path)
-            segments = split_padded(audio,rate)
+            segments = _split_padded(audio,rate)
+            samples = []
             for s in range(0,len(segments)):
                 root = self.path.replace(self.name,'')
                 sample_path = root+relative_path+self._create_sample_name(s)
                 save_sample(sample_path,segments[s],rate)
+                samples.append(TestSample(sample_path))
+            return samples
+
+    def generate_classless_samples(self,relative_path=''):
+        """
+        TestSamples are derived from TestRecordings. Typically each TestRecording
+        is annotated with an associated json file, but this is not the case for
+        live test recordings. This method will generate TestSamples without knowing
+        the class of each audio segment within it.
+        """
+        (rate,audio) = wav.read(self.path)
+        segments = _split_padded(audio,rate)
+        samples = []
+        for s in range(0,len(segments)):
+            root = self.path.replace(self.name,'')
+            sample_path = root+relative_path+self._create_sample_name(s,default_key='UNKNOWN')
+            save_sample(sample_path,segments[s],rate)
+            samples.append(TestSample(sample_path))
+        return samples
 
     def __str__(self):
         return self.name
@@ -349,6 +358,25 @@ class SampleSet():
                 # add to testing set
                 test.append(self.samples[s])
         return (train,test)
+
+    def stats(self):
+        """
+        Print out basic statistics about the sample set.
+        """
+        classes=[]
+        class_histogram={}
+        for sample in self.samples:
+            classes.append(sample.y)
+            if class_histogram.has_key(sample.y):
+                class_histogram[sample.y]=class_histogram[sample.y]+1
+            else:
+                class_histogram[sample.y]=0
+        self.classes=set(classes)
+        self.class_histogram = class_histogram
+        print("Num samples: "+str(len(self.samples)))
+        print("Num classes: "+str(len(self.classes)))
+        for key in self.class_histogram.iterkeys():
+            print("\t'"+key+"' : "+str(self.class_histogram[key]))
 
     def __len__(self):
         return len(self.samples)

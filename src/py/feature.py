@@ -20,6 +20,14 @@ class BaseFeature():
         self.overlap=32
         self.generated=False
 
+    def _extract_single_channel(self,audio):
+        """
+        Extract a single channel from the audio input.
+        """
+        if len(audio.shape) > 1:
+            return audio[:,0]
+        return audio
+
     def stats(self):
         """
         Print out basic statistics about the feature.
@@ -48,7 +56,7 @@ class MagnitudeFeature(BaseFeature):
         (rate,audio) = wav.read(self.sample.path)
 
         # grab first channel
-        one_channel = audio[:,0]
+        one_channel = self._extract_single_channel(audio)
         N = len(audio)
         T = 1.0 / float(rate)
 
@@ -84,7 +92,7 @@ class FreqBinFeature(BaseFeature):
         (rate,audio) = wav.read(self.sample.path)
 
         # grab first channel
-        one_channel = audio[:,0]
+        one_channel = self._extract_single_channel(audio)
         N = len(audio)
         T = 1.0 / float(rate)
 

@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from utils import split_padded, _calc_padding
+from utils import _split_padded, _calc_padding
 
 
 def create_1d_array(l):
@@ -49,7 +49,7 @@ class TestNonClassMethods(unittest.TestCase):
         """
         arr1000 = create_1d_array(1000)
         samplesize=500
-        arrays = split_padded(arr1000,samplesize)
+        arrays = _split_padded(arr1000,samplesize)
         for a in arrays:
             self.assertEqual(len(a),samplesize)
         self.assertEqual(len(arrays),2)
@@ -61,7 +61,7 @@ class TestNonClassMethods(unittest.TestCase):
         """
         arr1000 = create_1d_array(1000)
         samplesize=300
-        arrays = split_padded(arr1000,samplesize)
+        arrays = _split_padded(arr1000,samplesize)
         for a in arrays:
             self.assertEqual(len(a),samplesize)
         self.assertEqual(len(arrays),4)
