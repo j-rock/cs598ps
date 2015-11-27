@@ -150,7 +150,7 @@ def train_offline_svm_test_live(path=get_dropbox_path()):
 
 if __name__ == '__main__':
 
-    #run_offline_svm()
+    run_offline_svm()
 
     # Uncomment this line to run the classifier against new live recording
-    train_offline_svm_test_live()
+    #train_offline_svm_test_live()
