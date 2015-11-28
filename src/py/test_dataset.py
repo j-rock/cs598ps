@@ -24,6 +24,7 @@ def get_mock_templates(path):
     templates.append('template_A1_16bit_48000.wav')
     templates.append('/test/template_A2_16bit_48000.wav')
     templates.append('/test/a/template_A3_16bit_48000.wav')
+    templates.append('/test/a/nontemplate.wav')
     return templates
 
 def get_mock_testrecordings(path):
@@ -47,9 +48,10 @@ valid_abs_template_name='/lib/template_A1_16bit_48000.wav'
 valid_abs_testrecording_name='/lib/a/rec_Q1_0001.wav'
 valid_abs_testsample_name='/lib/a/b/sample_Q1_0001_1_A1.wav'
 
-class TestNonClassMethods(unittest.TestCase):
+class TestFinderMethods(unittest.TestCase):
     """
-    Tests for the methods not within a class.
+    Tests for the non-class methods that identify and find dataset files
+    such as Templates, TestRecordings, and TestSamples.
     """
 
     def test_is_template_method(self):
@@ -204,6 +206,92 @@ class TestTestSample(unittest.TestCase):
         self.assertEqual(m3.recording_id,'0034')
         self.assertEqual(m3.sample_num,'56')
         self.assertEqual(m3.y,'E32')
+
+class TestClassLabelMethods(unittest.TestCase):
+    """
+    Tests for the non-class methods that convert and handle
+    class labels.
+    """
+
+    def test_extract_gen_class(self):
+        """
+        Test that the "extract_gen_class" method properly returns a
+        short prefix summarizing the class to aid in histogram generation
+        and dataset analysis.
+        """
+        # simple two letter cases
+        self.assertEqual(extract_gen_class("A1"), "A")
+        self.assertEqual(extract_gen_class("E1"), "E")
+        self.assertEqual(extract_gen_class("I3"), "I")
+        self.assertEqual(extract_gen_class("O2"), "O")
+        self.assertEqual(extract_gen_class("U17"), "U")
+
+        # test the pure text cases
+        self.assertEqual(extract_gen_class("NONE"), "NONE")
+        self.assertEqual(extract_gen_class("UNKNOWN"), "UNKNOWN")
+
+        # test a longer class name
+        self.assertEqual(extract_gen_class("CLICK1"), "CLICK")
+
+        # test lowercase
+        self.assertEqual(extract_gen_class("Click17"), "CLICK")
+
+        # test an empty string
+        self.assertEqual(extract_gen_class(""), "")
+
+    def test_class_to_num(self):
+        """
+        Test that the "class_to_num" method properly returns a
+        number for a class label
+        """
+        # simple yes/no case
+        self.assertEqual(class_to_num("Y1"), 1)
+        self.assertEqual(class_to_num("N1"), 0)
+
+        # simple two letter cases
+        self.assertEqual(class_to_num("A1"), 2)
+        self.assertEqual(class_to_num("E1"), 3)
+        self.assertEqual(class_to_num("I3"), 4)
+        self.assertEqual(class_to_num("O2"), 5)
+        self.assertEqual(class_to_num("U17"), 6)
+
+        # test the pure text cases
+        self.assertEqual(class_to_num("NONE"), -1)
+        self.assertEqual(class_to_num("UNKNOWN"), -1)
+
+        # test a longer class name
+        self.assertEqual(class_to_num("CLICK1"), 10)
+
+        # test lowercase
+        self.assertEqual(class_to_num("Click17"), 10)
+
+        # test an empty string
+        self.assertEqual(class_to_num(""), -1)
+
+    def test_num_to_class(self):
+        """
+        Test that the "num_to_class" method properly returns a
+        class label for a num
+        """
+        # simple yes/no case
+        self.assertEqual(num_to_class(1), "Y")
+        self.assertEqual(num_to_class(0), "N")
+
+        # simple two letter cases
+        self.assertEqual(num_to_class(2), "A")
+        self.assertEqual(num_to_class(3), "E")
+        self.assertEqual(num_to_class(4), "I")
+        self.assertEqual(num_to_class(5), "O")
+        self.assertEqual(num_to_class(6), "U")
+
+        # test the pure text cases
+        self.assertEqual(num_to_class(-1), "")
+
+        # test a longer class name
+        self.assertEqual(num_to_class(10), "CLICK")
+
+        # test lowercase
+        self.assertEqual(num_to_class(10), "CLICK")
 
 def prep_sample_set():
     samples = []

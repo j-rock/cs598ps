@@ -25,6 +25,9 @@ if __name__ == '__main__':
     # return a list of the audio test samples
     samples = find_testsamples(path)
     print('\nFound '+str(len(samples))+' samples')
-    for sample in samples:
-        sample.check()
-        print('\t'+str(sample))
+    sample_set = SampleSet(samples)
+    sample_set.stats()
+    if raw_input('Print the names of all samples? [y/n]') == 'y':
+        for sample in samples:
+            sample.check()
+            print('\t'+str(sample))

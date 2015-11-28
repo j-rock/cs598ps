@@ -4,22 +4,25 @@
 
 from dataset import *
 from get_dropbox_path import *
+import sys
+import time
 
 if __name__ == '__main__':
     print('Running example2 - shows how to record/play/save a new audio file \n')
 
     # record a new sound
-    print('Recording...')
-    sample = record_sample(blocking=True)
+    raw_input('Press enter to start recording...')
+    print("Recording for 3 seconds...")
+    sample = record_sample(samplerate=22050,blocking=True)
 
     # print stats
-    print('Recorded sample of length: '+str(len(sample)))
+    print('\nRecorded sample of length: '+str(len(sample)))
 
     # play the audio back
     print('Replaying the recorded sample...')
-    play_sample(sample)
+    play_sample(sample,samplerate=22050)
 
     # write the file
     filename='sample-'+str(time.time())+'.wav'
     print('Writing the sample to local file: '+filename)
-    save_sample(filename,sample)
+    save_sample(filename,sample,samplerate=22050)

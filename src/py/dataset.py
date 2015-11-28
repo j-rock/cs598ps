@@ -1,6 +1,8 @@
 
 import time
 import os
+import re
+import string
 import os.path
 import json
 import scipy.io.wavfile as wav
@@ -129,7 +131,7 @@ class Template():
         self.key=name_parts[1]
 
 
-def process_live_recording(audio,env,id,directory="./temp"):
+def process_live_recording(audio,env,id,samplerate,directory="./temp"):
     """
     Store and create a TestRecording for a single
     live session and generate TestSamples for
@@ -140,7 +142,7 @@ def process_live_recording(audio,env,id,directory="./temp"):
     recording_path = directory+os.sep+"rec_"+env+"_"+id+".wav"
     if os.path.exists(recording_path):
         raise ValueError("Recording path already exists: "+recording_path)
-    save_sample(recording_path,audio)
+    save_sample(recording_path,audio,samplerate=samplerate)
     recording = TestRecording(recording_path)
     return recording.generate_classless_samples()
 
@@ -313,6 +315,62 @@ class TestSample():
             (rate,audio) = wav.read(self.path)
             self.samples=len(audio)
             self.samplerate=rate
+
+def extract_gen_class(class_label):
+    """
+    Convert a specific class label (e.g. A1) to a
+    generic class label (e.g. A).
+    """
+    matchObj = re.match(r'([a-zA-Z]+)([0-9]*)',class_label)
+    if matchObj:
+        return string.upper(matchObj.group(1))
+    return ""
+
+def class_to_num(class_label):
+    """
+    Convert a class label to a number to aid in classification
+    tasks.
+    """
+    gen_class = extract_gen_class(class_label)
+    if gen_class == "N":
+        return 0
+    elif gen_class =="Y":
+        return 1
+    elif gen_class =="A":
+        return 2
+    elif gen_class =="E":
+        return 3
+    elif gen_class =="I":
+        return 4
+    elif gen_class =="O":
+        return 5
+    elif gen_class =="U":
+        return 6
+    elif gen_class =="CLICK":
+        return 10
+    return -1
+
+def num_to_class(num):
+    """
+    Convert a number after classification back to a class label.
+    """
+    if num == 0:
+        return "N"
+    elif num ==1:
+        return "Y"
+    elif num ==2:
+        return "A"
+    elif num ==3:
+        return "E"
+    elif num ==4:
+        return "I"
+    elif num ==5:
+        return "O"
+    elif num ==6:
+        return "U"
+    elif num ==10:
+        return "CLICK"
+    return ""
 
 class SampleSet():
     """

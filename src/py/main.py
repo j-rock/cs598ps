@@ -136,10 +136,10 @@ def train_offline_svm_test_live(path=get_dropbox_path()):
     prompt ='Would you like to record a 3-sec sample to test?'
     if raw_input(prompt) == 'y':
         print('Recording now...')
-        live_recording = record_sample(blocking=True)
+        live_recording = record_sample(samplerate=22050,blocking=True)
 
         # process the recording into test samples
-        test_samples = process_live_recording(live_recording,"UChiApt",str(time.time()))
+        test_samples = process_live_recording(live_recording,"UChiApt",str(time.time()),22050)
 
         print('Testing...')
         for sample in test_samples:
