@@ -37,6 +37,9 @@ class BaseFeature():
         print("Window size: "+str(self.window_size))
         print("Window Overlap: "+str(self.overlap))
 
+    def __str__(self):
+        self.stats()
+
 
 class MagnitudeFeature(BaseFeature):
     """

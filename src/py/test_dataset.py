@@ -322,6 +322,36 @@ class TestSampleSet(unittest.TestCase):
         (train,test) = sample_set.sample()
         self.assertEqual(len(train)+len(test),len(sample_set))
 
+    def test_sample_include_class_filter(self):
+        """
+        Test that the include_class filter works correctly
+        by only including samples with that class.
+        """
+        samples = []
+        samples.append(TestSample('sample_Q1_0002_1_A1.wav'))
+        samples.append(TestSample('sample_Q1_0002_2_A2.wav'))
+        samples.append(TestSample('sample_Q1_0002_3_A3.wav'))
+        samples.append(TestSample('sample_Q1_0002_4_A4.wav'))
+        samples.append(TestSample('sample_Q1_0002_5_E1.wav'))
+        samples.append(TestSample('sample_Q1_0002_6_E1.wav'))
+        samples.append(TestSample('sample_Q1_0002_7_E1.wav'))
+        samples.append(TestSample('sample_Q1_0002_8_E1.wav'))
+        samples.append(TestSample('sample_Q1_0002_9_E1.wav'))
+        samples.append(TestSample('sample_Q1_0002_10_E1.wav'))
+        samples.append(TestSample('sample_Q1_0002_11_NONE.wav'))
+        samples.append(TestSample('sample_Q1_0002_12_NONE.wav'))
+
+        all_samples = SampleSet(samples)
+        self.assertEqual(len(all_samples),12)
+        a_samples = SampleSet(samples,classes=["A"])
+        self.assertEqual(len(a_samples),4)
+        e_samples = SampleSet(samples,classes=["E"])
+        self.assertEqual(len(e_samples),6)
+        none_samples = SampleSet(samples,classes=["NONE"])
+        self.assertEqual(len(none_samples),2)
+        all_samples = SampleSet(samples,classes=["A","E","NONE"])
+        self.assertEqual(len(all_samples),12)
+
     def test_sample_in_order(self):
         """
         Test that the sample method returns the same lists

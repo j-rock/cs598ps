@@ -11,9 +11,13 @@ class TemplateClassifier():
         self._raw_result = None
         self._raw_test_times = []
         self._raw_read_times = []
+        self.template=None
+        self.template_rate = None
 
     def train(self,template_path):
-        self.template_rate, self.template = wavfile.read(template_path)
+        (template_rate, template) = wavfile.read(template_path)
+        self.template = template
+        self.template_rate = template_rate
 
     def test_recording(self,audio_path):
         """
@@ -22,6 +26,7 @@ class TemplateClassifier():
         start = timeit.timeit()
         assert self.template != None
         audio_rate, audio = wavfile.read(audio_path)
+        print("Testing recording with samplerate: "+str(audio_rate))
         end_read = timeit.timeit()
         assert self.template_rate == audio_rate
 
@@ -38,13 +43,8 @@ class TemplateClassifier():
 
         # store raw result for plotting
         self._raw_result = result
-
-        # temporary hard-coded results, these can be used
-        # to test against expected values
-        matches = [TemplateMarker('A1',0,1),TemplateMarker('A1',0,3),TemplateMarker('A1',0,4)]
         self._raw_read_times.append(end_read - start)
         self._raw_test_times.append(timeit.timeit() - start)
-        return matches
 
     def _get_raw_result(self):
         """

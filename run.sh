@@ -1,4 +1,8 @@
 #! /bin/bash
 # Run the main classifier
 
-python src/py/main.py
+if [ $# -eq 1 ]; then
+    python src/py/main.py "$1"
+else
+    python src/py/main.py
+fi

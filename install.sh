@@ -2,8 +2,9 @@
 # Install the required python packages
 
 pip install sounddevice
-pip install easygui
-pip install Sphinx # double check this command
+
+# Sphinx not needed at this time
+#pip install Sphinx # double check this command
 
 # install the scikit lib for SVM implementation
 # Successfully installed scikit-learn-0.17

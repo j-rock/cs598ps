@@ -1,54 +1,16 @@
 from offlineclassifier import *
 from get_dropbox_path import *
 from dataset import *
-from matplotlib import pyplot as plt
 from feature import *
+from experiments import *
 import time
-
-def run_offline_template(path=get_dropbox_path()):
-    """
-    Run the offline version of the template classifier on all
-    recordings found in the path.
-
-    Parameters
-    ----------
-    path - string
-      The directory to search for TestRecordings
-    """
-    print('Running template matching')
-    classifier = TemplateClassifier()
-
-    # train classifier
-    templates = find_templates(path)
-    if len(templates) < 1:
-        raise ValueError('No templates found! aborting')
-
-    # train on a single template for now
-    classifier.train(templates[0])
-
-    # test offline dataset with classifier
-    recordings = find_testrecordings(get_dropbox_path())
-    for test in recordings:
-        matches = classifier.test_recording(test)
-        print "Test: "+test
-        print "Found "+str(len(matches))+" matches"
-
-        # plot results
-        plt.plot(classifier._get_raw_result())
-        plt.show()
-
-        print 'Classifier test times: '+str(classifier._get_raw_test_times())
-        print 'Classifier read times: '+str(classifier._get_raw_read_times())
-
+import sys
 
 def feature_factory(sample):
     return FreqBinFeature(sample).feature
 
 def class_factory(sample):
-    if sample.y == "A1":
-        return 1
-    else:
-        return 0
+    return class_to_num(sample.y)
 
 def run_offline_svm(path=get_dropbox_path()):
     """
@@ -81,6 +43,7 @@ def run_offline_svm(path=get_dropbox_path()):
     for sample in train:
         train_features.append(feature_factory(sample))
         train_classes.append(class_factory(sample))
+        print('class: '+str(class_factory(sample)))
 
     # train the classifier
     classifier = SVMClassifier()
@@ -96,61 +59,40 @@ def run_offline_svm(path=get_dropbox_path()):
     # test the classifier
     classifier.test(test_features,test_classes)
 
-def train_offline_svm_test_live(path=get_dropbox_path()):
+
+def print_usage():
     """
-    Train the offline version of the SVM classifier on all
-    samples found in the path. Then run the classifier on
-    1 second inputs live.
-
-    Parameters
-    ----------
-    path - string
-      The directory to search for TestSamples
+    Print the usage for the main script.
     """
-    print('Training SVM classifier')
+    print("USAGE: use the run.sh or the main.py directly.")
+    print("")
+    print("  run.sh <EXPERIMENT_NUMBER>")
+    print("  python main.py <EXPERIMENT_NUMBER>")
 
-    # return a list of the audio test samples
-    samples = find_testsamples(path)
-
-    # extract quiet samples
-    quiet_samples = []
-    for sample in samples:
-        if sample.env == 'Q1' or sample.env == 'Q2':
-            quiet_samples.append(sample)
-
-    sample_set = SampleSet(quiet_samples)
-    sample_set.stats()
-    (train,test) = sample_set.sample(in_order=False)
-
-    # generate features and classes from TestSamples
-    train_features = []
-    train_classes = []
-    for sample in train:
-        train_features.append(feature_factory(sample))
-        train_classes.append(class_factory(sample))
-
-    # train the classifier
-    classifier = SVMClassifier()
-    classifier.train(train_features,train_classes)
-
-    prompt ='Would you like to record a 3-sec sample to test?'
-    if raw_input(prompt) == 'y':
-        print('Recording now...')
-        live_recording = record_sample(samplerate=22050,blocking=True)
-
-        # process the recording into test samples
-        test_samples = process_live_recording(live_recording,"UChiApt",str(time.time()),22050)
-
-        print('Testing...')
-        for sample in test_samples:
-            feature = feature_factory(sample)
-            print("Prediction: "+str(classifier.predict(feature)))
-    else:
-        print('Exiting...')
 
 if __name__ == '__main__':
 
-    run_offline_svm()
+    # decide which experiment to run based on the command line or user-input
+    response = ""
+    if len(sys.argv) == 2:
+        response=sys.argv[1]
+        if response in ["-h","--help"]:
+             print_usage()
+             quit()
+    else:
+        prompt = "Which experiment would you like to run? [1-2]"
+        response = raw_input(prompt)
 
-    # Uncomment this line to run the classifier against new live recording
-    #train_offline_svm_test_live()
+    # run experiment
+    if response == "0":
+        path=get_dropbox_path()+"old-test/"
+        run_experiment_0(path)
+    elif response == "1":
+        run_experiment_1(include_none=True)
+    elif response == "2":
+        run_experiment_2()
+    elif response == "3":
+        path=get_dropbox_path()+"vowels-test/"
+        run_offline_svm(path)
+    else:
+        print("Invalid option. Aborting..")

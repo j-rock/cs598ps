@@ -378,8 +378,33 @@ class SampleSet():
     training and testing classifiers.
     """
 
-    def __init__(self,samples):
-        self.samples = samples
+    def __init__(self,samples,environments=[],classes=[]):
+        """
+        Constructor for the SampleSet class.
+
+        Parameters:
+        -----------
+
+        samples - list of TestSample
+            List of samples to include in the sample set.
+        environments - list of string
+            List of environment strings to filter the list of samples.
+            (e.g. environments=["Q"] will only include samples with
+            environment Q)
+        classes - list of string
+            List of class strings to filter the list of samples.
+            (e.g. classes=["A"] will only include samples with
+            class A)
+        """
+        s=[]
+        for sample in samples:
+            if len(classes) == 0:
+                s.append(sample)
+            else:
+                sample_class = extract_gen_class(sample.y)
+                if sample_class in classes:
+                    s.append(sample)
+        self.samples = s
 
     def sample(self,in_order=False,ratio=0.5):
         """
@@ -424,11 +449,12 @@ class SampleSet():
         classes=[]
         class_histogram={}
         for sample in self.samples:
-            classes.append(sample.y)
-            if class_histogram.has_key(sample.y):
-                class_histogram[sample.y]=class_histogram[sample.y]+1
+            sample_class = extract_gen_class(sample.y)
+            classes.append(sample_class)
+            if class_histogram.has_key(sample_class):
+                class_histogram[sample_class]=class_histogram[sample_class]+1
             else:
-                class_histogram[sample.y]=0
+                class_histogram[sample_class]=0
         self.classes=set(classes)
         self.class_histogram = class_histogram
         print("Num samples: "+str(len(self.samples)))
