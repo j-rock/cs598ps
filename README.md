@@ -31,3 +31,54 @@ Enhance the robustness of the template detection by introducing altered test dat
 ###Objective 3
 
 Run the detection algorithm live. See if templates can be detected on a per/person basis. Investigate what other attributes can be derived about a detection event (loud vs soft event, close vs distant, aggrevated vs relaxed).
+
+##Installation
+
+The codebase must be downloaded from Github. This can be done with the following command:
+
+    git clone https://github.com/j-rock/cs598ps.git
+
+##Run Instructions
+
+There are two primary methods of running the python codebase: experiment mode and listening mode. The experiments can be started in the following way:
+
+    run.sh
+  
+This will require user input for determinging which experiment to run. This can be specified from the command line as well:
+
+    run.sh 0  # run experiment 0
+    
+    run.sh 1  # run experiment 1
+
+Listening mode addresses Objective 3 by training a classifier offline and then testing against live input.
+
+##Testing
+
+A set of unit tests have been created for the python codebase. These can be run from the command line with the following command:
+
+    test.sh
+
+##Datasets
+
+All of the datasets used for this project were created using:
+*iPhone 5s microphone
+*MacBook Pro microphone
+*Ableton Live audio processing software
+
+Each dataset is summarized in the table below:
+
+Dataset Name  | Description | Number of Classes
+------------- | -------------|---------------
+old-test  | simple collection of vowel sounds and silence| ?
+yes-no-test  | collection of "yes" and "no" | 3 ("Y","N","NONE")
+vowels-test  | collection of English vowel sounds | 6 ("A","E","I","O","U")
+
+##Experiments
+
+Multiple experiments were devised to test the accuracy and practicality of the audio classifiers. They are summarized in the table below.
+
+Experiment Number  | Dataset Name  | Accuracy
+------------- | ------------- | -----------
+0  | old-test | ?
+1  | yes-no-test | 10 runs, ranged from 14/31 (45.16%) to 17/31 (54.83%)
+2  | yes-no-test | 10 runs, ranged from 15/24 (62.50%) to 18/24 (75.00%)
