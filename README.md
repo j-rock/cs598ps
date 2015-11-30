@@ -34,9 +34,16 @@ Run the detection algorithm live. See if templates can be detected on a per/pers
 
 ##Installation
 
-The codebase must be downloaded from Github. This can be done with the following command:
+Python 2.X is required. The codebase must be downloaded from Github. This can be done with the following command:
 
     git clone https://github.com/j-rock/cs598ps.git
+
+Additional libraries must be installed as well including:
+* numpy
+* scipy
+* python_speech_features library that provides MFCC and Filter Bank features
+
+Reference the `install.sh` file.
 
 ##Run Instructions
 
