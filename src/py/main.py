@@ -1,10 +1,11 @@
-from offlineclassifier import *
-from get_dropbox_path import *
-from dataset import *
-from feature import *
-from experiments import *
-import time
 import sys
+import time
+
+from cssigps.offlineclassifier import *
+from cssigps.dataset import *
+from cssigps.feature import *
+from cssigps.experiments import *
+from get_dropbox_path import *
 
 def feature_factory(sample):
     return FreqBinFeature(sample).feature
@@ -80,7 +81,7 @@ if __name__ == '__main__':
              print_usage()
              quit()
     else:
-        prompt = "Which experiment would you like to run? [1-2]"
+        prompt = "Which experiment would you like to run? [0-2]"
         response = raw_input(prompt)
 
     # run experiment
