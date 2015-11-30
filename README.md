@@ -61,24 +61,24 @@ A set of unit tests have been created for the python codebase. These can be run 
 ##Datasets
 
 All of the datasets used for this project were created using:
-*iPhone 5s microphone
-*MacBook Pro microphone
-*Ableton Live audio processing software
+* iPhone 5s microphone
+* MacBook Pro microphone
+* Ableton Live audio processing software
 
 Each dataset is summarized in the table below:
 
 Dataset Name  | Description | Number of Classes
 ------------- | -------------|---------------
 old-test  | simple collection of vowel sounds and silence| ?
-yes-no-test  | collection of "yes" and "no" | 3 ("Y","N","NONE")
-vowels-test  | collection of English vowel sounds | 6 ("A","E","I","O","U")
+yes-no-test  | collection of "yes" and "no" sound samples. Each "yes" and "no" are a different utterance. | 3 ("Y","N","NONE")
+vowels-test  | collection of English vowel sounds. 5 instances of each vowel are used to produce the different samples. | 6 ("A","E","I","O","U")
 
 ##Experiments
 
 Multiple experiments were devised to test the accuracy and practicality of the audio classifiers. They are summarized in the table below.
 
-Experiment Number  | Dataset Name  | Accuracy
+Experiment Number  | Dataset Name  | Accuracy (10 runs)
 ------------- | ------------- | -----------
 0  | old-test | ?
-1  | yes-no-test | 10 runs, ranged from 14/31 (45.16%) to 17/31 (54.83%)
-2  | yes-no-test | 10 runs, ranged from 15/24 (62.50%) to 18/24 (75.00%)
+1  | yes-no-test | 14/31(45.16%) to 17/31(54.83%)
+2  | yes-no-test | 15/24(62.50%) to 18/24(75.00%)
