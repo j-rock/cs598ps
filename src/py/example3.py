@@ -9,7 +9,7 @@ if __name__ == '__main__':
     print('Running example3 - process test recordings to generate new samples')
 
     # generate samples for all of the current recordings
-    path=get_dropbox_path()+"yes-no-test/"
+    path=get_dropbox_path()+"simple-yes-no-test/"
     recordings = find_testrecordings(path)
     print('\nFound '+str(len(recordings))+' recordings')
 

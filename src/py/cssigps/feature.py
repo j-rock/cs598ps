@@ -1,7 +1,11 @@
-from dataset import *
+
+import numpy as np
 import scipy.io.wavfile as wav
 import scipy.fftpack
-import numpy as np
+from features import mfcc
+from features import logfbank
+
+from dataset import *
 
 class BaseFeature():
     """
@@ -108,3 +112,53 @@ class FreqBinFeature(BaseFeature):
         for i in range(0,self.num_bins):
             feature.append((yf[(i*self.bin_width):((i+1)*self.bin_width-1)]).sum())
         self.feature = np.asarray(feature)
+
+class MFCCFeature(BaseFeature):
+    """
+    Mel Frequency Cepstral Coefficients features as implmented
+    by third-party library provided by:
+    https://github.com/jameslyons/python_speech_features
+    """
+
+    def __init__(self,testsample):
+        BaseFeature.__init__(self,testsample)
+        self.generate()
+
+    def stats(self):
+        BaseFeature.stats(self)
+        print("Feature: "+str(self.feature))
+
+    def generate(self):
+        (rate,audio) = wav.read(self.sample.path)
+
+        # grab first channel
+        one_channel = self._extract_single_channel(audio)
+        N = len(audio)
+        mfcc_feat = mfcc(one_channel,rate)
+        cols=mfcc_feat.shape[0]*mfcc_feat.shape[1]
+        self.feature = mfcc_feat.reshape((1,cols))[0]
+
+class FBankFeature(BaseFeature):
+    """
+    FilterBank features as implmented
+    by third-party library provided by:
+    https://github.com/jameslyons/python_speech_features
+    """
+
+    def __init__(self,testsample):
+        BaseFeature.__init__(self,testsample)
+        self.generate()
+
+    def stats(self):
+        BaseFeature.stats(self)
+        print("Feature: "+str(self.feature))
+
+    def generate(self):
+        (rate,audio) = wav.read(self.sample.path)
+
+        # grab first channel
+        one_channel = self._extract_single_channel(audio)
+        N = len(audio)
+        fbank_feat = logfbank(one_channel,rate)
+        cols=fbank_feat.shape[0]*fbank_feat.shape[1]
+        self.feature = fbank_feat.reshape((1,cols))[0]

@@ -1,13 +1,14 @@
-from offlineclassifier import *
-from get_dropbox_path import *
-from dataset import *
-from feature import *
-from experiment import *
-import time
 import sys
+import time
+
+from cssigps.offlineclassifier import *
+from cssigps.dataset import *
+from cssigps.feature import *
+from cssigps.experiments import *
+from get_dropbox_path import *
 
 def feature_factory(sample):
-    return FreqBinFeature(sample).feature
+    return FBankFeature(sample).feature
 
 def class_factory(sample):
     return class_to_num(sample.y)
@@ -47,9 +48,12 @@ def train_offline_svm_test_live(path=get_dropbox_path()):
     if raw_input(prompt) == 'y':
         print('Recording now...')
         live_recording = record_sample(samplerate=22050,blocking=True)
+        new_recording = live_recording.astype('int16')
+        print("dtype: "+str(new_recording.dtype))
+        #quit()
 
         # process the recording into test samples
-        test_samples = process_live_recording(live_recording,"UChiApt",str(time.time()),22050)
+        test_samples = process_live_recording(new_recording,"UChiApt",str(time.time()),22050)
 
         print('Testing...')
         for sample in test_samples:

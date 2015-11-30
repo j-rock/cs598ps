@@ -16,10 +16,12 @@ if __name__ == '__main__':
     print('\nFound '+str(len(samples))+' samples')
 
     # generate features
-    print("\nGenerating FreqBinFeatures")
+    print("\nGenerating MFCCFeature")
     for sample in samples:
         if sample.env == 'Q1':
             sample.check()
             print('\t'+str(sample))
-            feature = FreqBinFeature(sample)
+            # feature = FreqBinFeature(sample)
+            feature = MFCCFeature(sample) #FreqBinFeature(sample)
             feature.stats()
+            break

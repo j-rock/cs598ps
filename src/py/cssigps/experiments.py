@@ -3,6 +3,7 @@
 #          and features.
 #
 from matplotlib import pyplot as plt
+
 from offlineclassifier import *
 from get_dropbox_path import *
 from dataset import *
@@ -47,7 +48,7 @@ def run_experiment_0(path=get_dropbox_path()+"old-test/"):
     print 'Classifier read times: '+str(classifier._get_raw_read_times())
 
 def feature_factory(sample):
-    return FreqBinFeature(sample,num_bins=40).feature
+    return FBankFeature(sample).feature
 
 def class_factory(sample):
     return class_to_num(sample.y)
@@ -62,7 +63,6 @@ def run_experiment_1(include_none=False,path=get_dropbox_path()+"yes-no-test/"):
     Run Experiment 1.
     Use the Yes/No sample collection.
     Use a single class classifier (for Yes).
-    Use FreqBinFeature for features.
     Run the offline version of the SVM classifier.
 
     Parameters:
@@ -111,7 +111,6 @@ def run_experiment_2(path=get_dropbox_path()+"yes-no-test/"):
     Run Experiment 2.
     Use the Yes/No sample collection, but only the "Y" and "NONE" samples.
     Use a single class classifier (for Yes).
-    Use FreqBinFeature for features.
     Run the offline version of the SVM classifier.
 
     Parameters:
@@ -136,6 +135,55 @@ def run_experiment_2(path=get_dropbox_path()+"yes-no-test/"):
         train_classes.append(single_class_factory(sample,"Y"))
         #print(str(sample))
         #print('class: '+str(single_class_factory(sample,"Y")))
+
+    # train the classifier
+    print("Training classifier...")
+    classifier = SVMClassifier()
+    classifier.train(train_features,train_classes)
+
+    print("Testing classifier...")
+    # Test samples one by one
+    score = 0
+    for sample in test:
+        prediction = classifier.predict(feature_factory(sample))
+        test_class = single_class_factory(sample,"Y")
+        if prediction != test_class:
+            print(str(sample))
+            print("incorrect classification (prediction: "+str(prediction)+", class: "+str(test_class)+")")
+            print("feature: "+str(feature_factory(sample)))
+        else:
+            print("correct classification")
+            score=score+1
+    print('Classification score: '+str(score)+'/'+str(len(test)))
+    print('Classification score: '+str(float(score)/float(len(test))))
+
+def run_experiment_3(path=get_dropbox_path()+"simple-yes-no-test/"):
+    """
+    Run Experiment 3.
+    Use the simple Yes/No sample collection, but only the "Y" and "NONE" samples.
+    Use a single class classifier (for Yes).
+    Run the offline version of the SVM classifier.
+
+    Parameters:
+    -----------
+    path - string
+        the path to search for the samples
+    """
+    print('Running Experiment 3')
+    # return a list of the audio test samples
+    samples = find_testsamples(path)
+
+    classes=["Y","NONE"]
+    sample_set = SampleSet(samples,classes=classes)
+    sample_set.stats()
+    (train,test) = sample_set.sample()
+
+    # generate features and classes from TestSamples
+    train_features = []
+    train_classes = []
+    for sample in train:
+        train_features.append(feature_factory(sample))
+        train_classes.append(single_class_factory(sample,"Y"))
 
     # train the classifier
     print("Training classifier...")
