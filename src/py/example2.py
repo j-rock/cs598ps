@@ -2,10 +2,11 @@
 # classes in the "dataset" Python module. Recall that a Python module is simply
 # a collection of classes and functions within a single file.
 
-from dataset import *
-from get_dropbox_path import *
 import sys
 import time
+
+from cssigps.dataset import *
+from get_dropbox_path import *
 
 if __name__ == '__main__':
     print('Running example2 - shows how to record/play/save a new audio file \n')

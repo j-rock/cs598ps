@@ -2,9 +2,9 @@
 # classes in the "dataset" Python module. Recall that a Python module is simply
 # a collection of classes and functions within a single file.
 
-from dataset import *
+from cssigps.dataset import *
+from cssigps.feature import *
 from get_dropbox_path import *
-from feature import *
 
 if __name__ == '__main__':
     print('Running example4 - generates features for each test sample')
