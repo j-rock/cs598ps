@@ -205,3 +205,51 @@ def run_experiment_3(path=get_dropbox_path()+"simple-yes-no-test/"):
             score=score+1
     print('Classification score: '+str(score)+'/'+str(len(test)))
     print('Classification score: '+str(float(score)/float(len(test))))
+
+def run_experiment_4(path=get_dropbox_path()+"simple-yes-no-test/"):
+    """
+    Run Experiment 4.
+    Use the simple Yes/No sample collection and all samples.
+    Use multi-class classifier ("Y","N","NONE").
+    Run the offline version of the SVM classifier.
+
+    Parameters:
+    -----------
+    path - string
+        the path to search for the samples
+    """
+    print('Running Experiment 4')
+    # return a list of the audio test samples
+    samples = find_testsamples(path)
+
+    sample_set = SampleSet(samples)
+    sample_set.stats()
+    (train,test) = sample_set.sample()
+
+    # generate features and classes from TestSamples
+    train_features = []
+    train_classes = []
+    for sample in train:
+        train_features.append(feature_factory(sample))
+        train_classes.append(class_factory(sample))
+
+    # train the classifier
+    print("Training classifier...")
+    classifier = SVMClassifier()
+    classifier.train(train_features,train_classes)
+
+    print("Testing classifier...")
+    # Test samples one by one
+    score = 0
+    for sample in test:
+        prediction = classifier.predict(feature_factory(sample))
+        test_class = single_class_factory(sample,"Y")
+        if prediction != test_class:
+            print(str(sample))
+            print("incorrect classification (prediction: "+str(prediction)+", class: "+str(test_class)+")")
+            print("feature: "+str(feature_factory(sample)))
+        else:
+            print("correct classification")
+            score=score+1
+    print('Classification score: '+str(score)+'/'+str(len(test)))
+    print('Classification score: '+str(float(score)/float(len(test))))

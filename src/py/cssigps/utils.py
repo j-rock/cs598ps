@@ -20,7 +20,7 @@ def record_sample(duration=3,samplerate=11025,channels=1,blocking=False):
     blocking : bool
         True if method should block until it completes. False otherwise.
     """
-    sample=sd.rec(duration * samplerate, samplerate=samplerate, channels=channels)
+    sample=sd.rec(duration * samplerate, samplerate=samplerate, channels=channels, dtype='int16')
     if blocking == True:
         sd.wait()
     return sample

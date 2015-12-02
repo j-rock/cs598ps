@@ -95,6 +95,8 @@ if __name__ == '__main__':
     elif response == "3":
         run_experiment_3()
     elif response == "4":
+        run_experiment_4()
+    elif response == "5":
         path=get_dropbox_path()+"vowels-test/"
         run_offline_svm(path)
     else:

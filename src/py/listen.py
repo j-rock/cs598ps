@@ -29,7 +29,7 @@ def train_offline_svm_test_live(path=get_dropbox_path()):
     # return a list of the audio test samples
     samples = find_testsamples(path)
 
-    sample_set = SampleSet(samples)
+    sample_set = SampleSet(samples,classes=["Y","NONE"])
     sample_set.stats()
     (train,test) = sample_set.sample(in_order=False)
 
@@ -48,12 +48,9 @@ def train_offline_svm_test_live(path=get_dropbox_path()):
     if raw_input(prompt) == 'y':
         print('Recording now...')
         live_recording = record_sample(samplerate=22050,blocking=True)
-        new_recording = live_recording.astype('int16')
-        print("dtype: "+str(new_recording.dtype))
-        #quit()
 
         # process the recording into test samples
-        test_samples = process_live_recording(new_recording,"UChiApt",str(time.time()),22050)
+        test_samples = process_live_recording(live_recording,"UChiApt",str(time.time()),22050)
 
         print('Testing...')
         for sample in test_samples:

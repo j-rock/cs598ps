@@ -1,9 +1,10 @@
+import timeit
 
+from sklearn import svm
 from scipy import signal
 import scipy.io.wavfile as wavfile
+
 from dataset import *
-import timeit
-from sklearn import svm
 
 class TemplateClassifier():
 
@@ -85,6 +86,62 @@ class BaseClassifier():
         """
         Predict the class of a single instance.
         """
+
+class BestGuessClassifier(BaseClassifier):
+    """
+    Baseline classifier that uses the probabilities of the
+    different class labels during training, and simply guesses
+    the most probably class each time during predict/test stages.
+    This is meant to give a baseline of performance that can be
+    achieved with trivial solutions.
+    """
+
+    def __init__(self):
+        BaseClassifier.__init__(self)
+        self.most_probable_class=-1
+
+    def train(self,X,y):
+        """
+        Train the classifier with X, a set of instances,
+        and y, a set of class labels.
+        """
+        classes={}
+        for class_ in y:
+            if str(class_) in classes:
+                classes[str(class_)]=classes[str(class_)]+1
+            else:
+                classes[str(class_)]=1
+
+        max_val=0
+        for c in classes:
+            if classes[c] > max_val:
+                max_val = classes[c]
+                self.most_probable_class = int(c)
+
+    def test(self,X,y):
+        """
+        Test the classifier against X, a set of instances,
+        and y, a set of class labels.
+        """
+        # convert to numpy arrays
+        Xtest = np.asarray(X)
+        Ytest = np.asarray(y)
+        score = 0
+        for i in range(0,len(Xtest)):
+            if self.most_probable_class == Ytest[i]:
+                print('correct classification')
+                score=score+1
+            else:
+                print('incorrect classification - true class: '+str(self.most_probable_class))
+        print('Classification score: '+str(score)+'/'+str(len(Xtest)))
+        print('Classification score: '+str(float(score)/float(len(Xtest))))
+
+    def predict(self,x):
+        """
+        Predict the class of a single instance.
+        """
+        return self.most_probable_class
+
 
 class SVMClassifier(BaseClassifier):
     """
