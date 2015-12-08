@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import sounddevice as sd
 
 
-def record_sample(duration=3,samplerate=11025,channels=1,blocking=False):
+def record_sample(duration=3,samplerate=22050,channels=1,blocking=False):
     """
     An optionally blocking method used to start the recording of a sample.
 
@@ -25,10 +25,10 @@ def record_sample(duration=3,samplerate=11025,channels=1,blocking=False):
         sd.wait()
     return sample
 
-def play_sample(sample,samplerate=11025,blocking=True):
+def play_sample(sample,samplerate=22050,blocking=True):
     sd.play(sample, samplerate=samplerate,blocking=blocking)
 
-def save_sample(filename,sample,samplerate=11025):
+def save_sample(filename,sample,samplerate=22050):
     wav.write(filename,samplerate,sample)
 
 def load_plot(wavfile):
