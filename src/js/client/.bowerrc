@@ -1,0 +1,6 @@
+{
+  "directory": "components/",
+  "analytics": true,
+  "timeout": 120000,
+  "color":true
+}

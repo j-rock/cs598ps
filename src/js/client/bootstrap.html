@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Device Motion</title>
+
+    <!-- Bootstrap -->
+    <link href="components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="main.js"></script>
+    <style>
+      body {
+        font-family: consolas, Helvetica, Arial, sans-serif;
+      }
+    </style>
+  </head>
+  <body  onload="init()">
+
+    <div class="container theme-showcase" role="main">
+      <div class="page-header">
+        <h1>DeviceMotion</h1>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <button class="btn btn-default" id="recordButton" onclick="toggleRecording(true)">Record</button>
+          <button class="btn btn-default" id="pauseButton" onclick="toggleRecording(false)">Pause</button>
+          <button class="btn btn-default" id="uploadButton" onclick="upload()">Upload</button>
+        </div>
+        <div class="col-md-12">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Status:</td>
+                <td id="recordingStatus"></td>
+              </tr>
+              <tr>
+                <td>Num Points:</td>
+                <td id="numDataPoints"></td>
+              </tr>
+              <tr>
+                <td>Accel.X</td>
+                <td id="devmoAccelX"></td>
+              </tr>
+              <tr>
+                <td>Accel.Y</td>
+                <td id="devmoAccelY"></td>
+              </tr>
+              <tr>
+                <td>Accel.Z</td>
+                <td id="devmoAccelZ"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!--<div class="col-md-12">
+          <canvas id="myCanvas" width="200" height="100" style="border:1px solid #000000;">
+          </canvas>
+        </div>-->
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="components/bootstrap/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>
