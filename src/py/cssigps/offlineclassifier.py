@@ -60,6 +60,58 @@ class TemplateClassifier():
     def _get_raw_read_times(self):
         return self._raw_read_times
 
+class MultiTemplateClassifier():
+
+    def __init__(self):
+        self._raw_results = []
+        self.templates=[]
+        self.template_rates = []
+        self.template_classes = []
+
+    def train(self,template_paths, template_classes):
+        assert len(template_paths) == len(template_classes)
+        for i in range(0,len(template_paths)):
+            path = template_paths[i]
+            class_ = template_classes[i]
+            (template_rate, template) = wavfile.read(path)
+            self.templates.append(template)
+            self.template_rates.append(template_rate)
+            self.template_classes.append(class_)
+
+    def predict(self,audio_path):
+        """
+        Run the classification on a testsample input.
+        """
+        audio_rate, audio = wavfile.read(audio_path)
+        print("Testing recording with samplerate: "+str(audio_rate))
+        self._raw_results = []
+
+        for i in range(0,len(self.templates)):
+            template = self.templates[i]
+            class_ = self.template_classes[i]
+            # convolution
+            result = signal.fftconvolve(audio, template)
+
+            # scale and take absolute value
+            result = result ** 2
+
+            # low-pass filter
+            a = 1
+            b = signal.firwin(999, cutoff = 1e-9, window = 'hamming')
+            result = signal.lfilter(b, a, result, axis = 0)
+
+            print('template label: '+str(class_)+" max value: "+str(result.max()))
+
+            # store raw result for plotting
+            self._raw_results.append(result)
+
+    def _get_raw_result(self):
+        """
+        Internal test method for returning the raw result of the test method.
+        This can be used for plotting.
+        """
+        return self._raw_results
+
 class BaseClassifier():
     """
     BaseClassifier providing common functionality.
@@ -129,12 +181,12 @@ class BestGuessClassifier(BaseClassifier):
         score = 0
         for i in range(0,len(Xtest)):
             if self.most_probable_class == Ytest[i]:
-                print('correct classification')
+            #    print("incorrect classification (prediction: "+str(self.most_probable_class)+", class: "+str(Ytest[i])+")")
+            #else:
+            #    print("correct classification")
                 score=score+1
-            else:
-                print('incorrect classification - true class: '+str(self.most_probable_class))
-        print('Classification score: '+str(score)+'/'+str(len(Xtest)))
-        print('Classification score: '+str(float(score)/float(len(Xtest))))
+        print('BestGuess: Classification score: '+str(score)+'/'+str(len(Xtest)))
+        print('BestGuess: Classification score: '+str(float(score)/float(len(Xtest))))
 
     def predict(self,x):
         """
