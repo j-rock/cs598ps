@@ -49,21 +49,41 @@ Reference the `install.sh` file.
 
 There are two primary methods of running the python codebase: experiment mode and listening mode. The experiments can be started in the following way:
 
-    run.sh
-  
-This will require user input for determinging which experiment to run. This can be specified from the command line as well:
+    ./run.sh <SINGLE_OR_MULTI> <DATASET> <FEATURE_TYPE>  # see examples below
 
-    run.sh 0  # run experiment 0
-    
-    run.sh 1  # run experiment 1
+Table. Examples of single-class classification used to generate poster results.    
 
-Listening mode addresses Objective 3 by training a classifier offline and then testing against live input.
+Command  | Description
+------------- | -------------
+`./run.sh S Y fbank`  | run single-class classification with "yes" samples using "filterbank" mel spectrum features
+`./run.sh S N fbank` | run single-class classification with "no" samples using "filterbank" mel spectrum features
+`./run.sh S A fbank`  | run single-class classification with "a" samples using "filterbank" mel spectrum features
+`./run.sh S E fbank` | run single-class classification with "e" samples using "filterbank" mel spectrum features
+`./run.sh S I fbank`  | run single-class classification with "a" samples using "filterbank" mel spectrum features
+`./run.sh S O fbank` | run single-class classification with "e" samples using "filterbank" mel spectrum features
+`./run.sh S U fbank`  | run single-class classification with "a" samples using "filterbank" mel spectrum features
+
+Table. Examples of multi-class classification used to generate poster results.    
+
+Command  | Description
+------------- | -------------
+`./run.sh M Y fbank`  | run multi-class classification with entire "yes/no" dataset using "filterbank" mel spectrum features
+`./run.sh M A fbank`  | run multi-class classification with entire "vowels" dataset using "filterbank" mel spectrum features
 
 ##Testing
 
 A set of unit tests have been created for the python codebase. These can be run from the command line with the following command:
 
-    test.sh
+    ./test.sh
+
+Successful output looks like the following:
+```
+...
+----------------------------------------------------------------------
+Ran 28 tests in 0.008s
+
+OK
+```
 
 ##Datasets
 
@@ -76,18 +96,6 @@ Each dataset is summarized in the table below:
 
 Dataset Name  | Description | Number of Classes
 ------------- | -------------|---------------
-old-test  | simple collection of vowel sounds and silence| ?
-simple-yes-no-test | collection of "yes" and "no" sound samples where each "yes" and "no" are nearly identical. | 3 ("Y","N","NONE")
 yes-no-test  | collection of "yes" and "no" sound samples. Each "yes" and "no" are a different utterance. | 3 ("Y","N","NONE")
-vowels-test  | collection of English vowel sounds. 5 instances of each vowel are used to produce the different samples. | 6 ("A","E","I","O","U")
+vowels-test  | collection of English vowel sounds. 5 instances of each vowel are used to produce the different samples. | 7 ("A","E","I","O","U","NONE")
 
-##Experiments
-
-Multiple experiments were devised to test the accuracy and practicality of the audio classifiers. They are summarized in the table below.
-
-Experiment Number  | Dataset Name  | Description
-------------- | ------------- | -----------
-0  | old-test | 
-1  | yes-no-test | Multi-class classification for all 3 classes.
-2  | yes-no-test | Single class classification (Y vs NONE).
-3  | simple-yes-no-test | Single class classification for trivial dataset. Expectation is nearly 100% accuracy on this experiment.
