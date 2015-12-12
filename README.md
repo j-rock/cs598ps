@@ -47,7 +47,7 @@ Reference the `install.sh` file.
 
 ##Run Instructions
 
-There are two primary methods of running the python codebase: experiment mode and listening mode. The experiments can be started in the following way:
+The python classification experiments can be run in the following way:
 
     ./run.sh <SINGLE_OR_MULTI> <DATASET> <FEATURE_TYPE>  # see examples below
 
