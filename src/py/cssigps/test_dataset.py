@@ -1,8 +1,10 @@
 import unittest
 import os
 import time
-from dataset import _get_abs_files, _is_template, _is_testsample, _is_testrecording
+
 from dataset import *
+from dataset import _get_abs_files, _is_template, _is_testsample, _is_testrecording
+
 
 def create_dummy_file(path):
     """
@@ -351,6 +353,35 @@ class TestSampleSet(unittest.TestCase):
         self.assertEqual(len(none_samples),2)
         all_samples = SampleSet(samples,classes=["A","E","NONE"])
         self.assertEqual(len(all_samples),12)
+
+    def test_sample_class_rep(self):
+        """
+        Test that the class_rep method returns a sample from
+        each class to be used as a template.
+        """
+        samples = []
+        samples.append(TestSample('sample_Q1_0002_1_A1.wav'))
+        samples.append(TestSample('sample_Q1_0002_2_A2.wav'))
+        samples.append(TestSample('sample_Q1_0002_3_A3.wav'))
+        samples.append(TestSample('sample_Q1_0002_4_A4.wav'))
+        samples.append(TestSample('sample_Q1_0002_5_E1.wav'))
+        samples.append(TestSample('sample_Q1_0002_6_E1.wav'))
+        samples.append(TestSample('sample_Q1_0002_7_E1.wav'))
+        samples.append(TestSample('sample_Q1_0002_8_E1.wav'))
+        samples.append(TestSample('sample_Q1_0002_9_E1.wav'))
+        samples.append(TestSample('sample_Q1_0002_10_E1.wav'))
+        samples.append(TestSample('sample_Q1_0002_11_NONE.wav'))
+        samples.append(TestSample('sample_Q1_0002_12_NONE.wav'))
+
+        sample_set = SampleSet(samples)
+        templates = sample_set.class_rep()
+        self.assertEqual(len(templates),3)
+        classes=[]
+        for t in templates:
+            print(str(t))
+            classes.append(extract_gen_class(t.y))
+        #classes=list(extract_gen_class(t.y) for t in templates)
+        self.assertEqual(['A','E','NONE'],classes)
 
     def test_sample_in_order(self):
         """

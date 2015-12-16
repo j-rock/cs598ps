@@ -7,65 +7,6 @@ from cssigps.feature import *
 from cssigps.experiments import *
 from get_dropbox_path import *
 
-def feature_factory(sample):
-    return FreqBinFeature(sample).feature
-
-def class_factory(sample):
-    return class_to_num(sample.y)
-
-def run_offline_svm(path=get_dropbox_path()):
-    """
-    Run the offline version of the SVM classifier on all
-    samples found in the path.
-
-    Parameters
-    ----------
-    path - string
-      The directory to search for TestSamples
-    """
-    print('Running SVM classifier')
-
-    # return a list of the audio test samples
-    samples = find_testsamples(path)
-
-    # extract quiet samples
-    quiet_samples = []
-    for sample in samples:
-        if sample.env == 'Q1' or sample.env == 'Q2':
-            quiet_samples.append(sample)
-
-    sample_set = SampleSet(quiet_samples)
-    sample_set.stats()
-    (train,test) = sample_set.sample(in_order=False)
-
-    # generate features and classes from TestSamples
-    train_features = []
-    train_classes = []
-    for sample in train:
-        train_features.append(feature_factory(sample))
-        train_classes.append(class_factory(sample))
-        print('class: '+str(class_factory(sample)))
-
-    # train the classifier
-    classifier = SVMClassifier()
-    classifier.train(train_features,train_classes)
-
-    # generate features and classes from TestSamples
-    test_features = []
-    test_classes = []
-    for sample in test:
-        test_features.append(feature_factory(sample))
-        test_classes.append(class_factory(sample))
-
-    # test the classifier
-    classifier.test(test_features,test_classes)
-
-def mag_factory(sample):
-    return MagnitudeFeature(sample).feature
-
-def fbank_factory(sample):
-    return FBankFeature(sample).feature
-
 def print_usage():
     """
     Print the usage for the main script.
@@ -110,7 +51,7 @@ if __name__ == '__main__':
         f = sys.argv[3]
         classes=["NONE"]
         path=get_dropbox_path()+"yes-no-test/"
-        factory = fbank_factory
+        factory = FBankFeature()
 
         # select the class
         if c == "Y":
@@ -140,7 +81,11 @@ if __name__ == '__main__':
 
         # select the feature
         if f == "fbank":
-            factory=fbank_factory
+            factory=FBankFeature()
+        elif f == "m" or f == "magnitude":
+            factory=MagnitudeFeature()
+        elif f == "t" or f == "template":
+            factory=MultiTemplateFeature(SampleSet(find_testsamples(path),classes=classes).class_rep())
         else:
             print("feature argument invalid")
 
@@ -148,14 +93,14 @@ if __name__ == '__main__':
         samples = find_testsamples(path)
         sample_set = SampleSet(samples,classes=classes)
         sample_set.stats()
-        run_sample_experiment(sample_set,feat_factory=fbank_factory)
+        run_sample_experiment(sample_set,feat_factory=factory)
     elif response == "M":
         # run multi class classifier
         c = sys.argv[2]
         f = sys.argv[3]
         classes=["NONE"]
         path=get_dropbox_path()+"yes-no-test/"
-        factory = fbank_factory
+        factory = FBankFeature()
 
         # select the class
         if c == "Y":
@@ -168,16 +113,20 @@ if __name__ == '__main__':
             print("class argument invalid")
             quit()
 
-        # select the feature
-        if f == "fbank":
-            factory=fbank_factory
-        else:
-            print("feature argument invalid")
-
-
         samples = find_testsamples(path)
         sample_set = SampleSet(samples,classes=classes)
         sample_set.stats()
-        run_sample_experiment(sample_set,feat_factory=fbank_factory)
+
+        # select the feature
+        if f == "fbank":
+            factory=FBankFeature()
+        elif f == "m" or f == "magnitude":
+            factory=MagnitudeFeature()
+        elif f == "t" or f == "template":
+            factory=MultiTemplateFeature(SampleSet(find_testsamples(path),classes=classes).class_rep())
+        else:
+            print("feature argument invalid")
+
+        run_sample_experiment(sample_set,feat_factory=factory)
     else:
         print("Invalid option. Aborting..")

@@ -1,14 +1,15 @@
-
 import time
 import os
 import re
 import string
 import os.path
 import json
+import random
+
 import scipy.io.wavfile as wav
+
 from utils import *
 from utils import _split_padded
-import random
 
 def _get_abs_files(path):
     """
@@ -441,6 +442,19 @@ class SampleSet():
                 # add to testing set
                 test.append(self.samples[s])
         return (train,test)
+
+    def class_rep(self):
+        """
+        Return an array of samples with one from each class type.
+        """
+        classes=[]
+        rep=[]
+        for sample in self.samples:
+            sample_class = extract_gen_class(sample.y)
+            if sample_class not in classes:
+                rep.append(sample)
+                classes.append(sample_class)
+        return rep
 
     def stats(self):
         """

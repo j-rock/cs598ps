@@ -47,7 +47,6 @@ def run_experiment_0(path=get_dropbox_path()+"old-test/"):
     print 'Classifier test times: '+str(classifier._get_raw_test_times())
     print 'Classifier read times: '+str(classifier._get_raw_read_times())
 
-MultiTemplateLoader([])
 
 def feature_factory(sample):
     return FBankFeature(sample).feature
@@ -266,8 +265,8 @@ def run_sample_experiment(sampleset,ratio=0.5,feat_factory=feature_factory):
         object containing the list of samples for training/testing
     ratio - float
         the training/testing ratio
-    feat_factory - function
-        the function to generate features for each sample from
+    feat_factory - FeatureClass object
+        the FeatureClass to use generate API for creating testsample features
     """
     (train,test) = sampleset.sample(ratio=ratio)
 
@@ -275,7 +274,7 @@ def run_sample_experiment(sampleset,ratio=0.5,feat_factory=feature_factory):
     train_features = []
     train_classes = []
     for sample in train:
-        train_features.append(feat_factory(sample))
+        train_features.append(feat_factory.generate(sample))
         train_classes.append(class_factory(sample))
 
     # train the classifier
@@ -293,14 +292,14 @@ def run_sample_experiment(sampleset,ratio=0.5,feat_factory=feature_factory):
     test_features=[]
     test_classes=[]
     for sample in test:
-        prediction = classifier.predict(feat_factory(sample))
+        prediction = classifier.predict(feat_factory.generate(sample))
         test_class = class_factory(sample)
-        test_features.append(feat_factory(sample))
+        test_features.append(feat_factory.generate(sample))
         test_classes.append(test_class)
         if prediction != test_class:
             print(str(sample))
             print("incorrect classification (prediction: "+str(prediction)+", class: "+str(test_class)+")")
-            print("feature: "+str(feat_factory(sample)))
+            print("feature: "+str(feat_factory.generate(sample)))
         else:
             print("correct classification")
             score=score+1
