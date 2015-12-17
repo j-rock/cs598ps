@@ -354,6 +354,34 @@ class TestSampleSet(unittest.TestCase):
         all_samples = SampleSet(samples,classes=["A","E","NONE"])
         self.assertEqual(len(all_samples),12)
 
+    def test_sample_include_env_filter(self):
+        """
+        Test that the include_env filter works correctly
+        by only including samples with that environment.
+        """
+        samples = []
+        samples.append(TestSample('sample_Q1_0002_1_A1.wav'))
+        samples.append(TestSample('sample_Q1_0002_2_A2.wav'))
+        samples.append(TestSample('sample_Q1_0002_3_A3.wav'))
+        samples.append(TestSample('sample_Q1_0002_4_A4.wav'))
+        samples.append(TestSample('sample_Q1_0002_5_E1.wav'))
+        samples.append(TestSample('sample_L1_0002_6_A1.wav'))
+        samples.append(TestSample('sample_L1_0002_7_A2.wav'))
+        samples.append(TestSample('sample_L1_0002_8_A3.wav'))
+        samples.append(TestSample('sample_L1_0002_9_A4.wav'))
+        samples.append(TestSample('sample_L1_0002_10_E1.wav'))
+        samples.append(TestSample('sample_Q1_0002_11_NONE.wav'))
+        samples.append(TestSample('sample_Q1_0002_12_NONE.wav'))
+
+        all_samples = SampleSet(samples)
+        self.assertEqual(len(all_samples),12)
+        q1_samples = SampleSet(samples,envs=["Q1"])
+        self.assertEqual(len(q1_samples),7)
+        l1_samples = SampleSet(samples,envs=["L1"])
+        self.assertEqual(len(l1_samples),5)
+        all_samples = SampleSet(samples,envs=["Q1","L1"])
+        self.assertEqual(len(all_samples),12)
+
     def test_sample_class_rep(self):
         """
         Test that the class_rep method returns a sample from

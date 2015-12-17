@@ -379,18 +379,19 @@ class SampleSet():
     training and testing classifiers.
     """
 
-    def __init__(self,samples,environments=[],classes=[]):
+    def __init__(self,samples,envs=None,classes=None):
         """
-        Constructor for the SampleSet class.
+        Constructor for the SampleSet class. Filtering available for both
+        classes and environments of TestSamples.
 
         Parameters:
         -----------
 
         samples - list of TestSample
             List of samples to include in the sample set.
-        environments - list of string
+        envs - list of string
             List of environment strings to filter the list of samples.
-            (e.g. environments=["Q"] will only include samples with
+            (e.g. envs=["Q"] will only include samples with
             environment Q)
         classes - list of string
             List of class strings to filter the list of samples.
@@ -399,12 +400,13 @@ class SampleSet():
         """
         s=[]
         for sample in samples:
-            if len(classes) == 0:
-                s.append(sample)
-            else:
-                sample_class = extract_gen_class(sample.y)
-                if sample_class in classes:
-                    s.append(sample)
+            sample_class = extract_gen_class(sample.y)
+            sample_env = sample.env
+            if classes and not sample_class in classes:
+                continue
+            if envs and not sample_env in envs:
+                continue
+            s.append(sample)
         self.samples = s
 
     def sample(self,in_order=False,ratio=0.5):
